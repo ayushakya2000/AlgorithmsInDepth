@@ -4,11 +4,12 @@
 struct Node //for linked list
 {
     double data;
-    struct Node* next;
+    struct Node *next;
 };
 typedef struct Node *node;
 
 node companies[100000];
+int entries[100000];
 int maxcom=0;
 
 node newnode(double val)
@@ -37,11 +38,13 @@ void process(char inp[1000])
             break;
     }
 
-    res[i]='\0';
-    com=atoi(res);
+    res[i]='\0';//company no in string
+    com=atoi(res)-1;
     if(maxcom<com)
         maxcom=com;
-
+    
+    //printf("com is== %d \n",com);
+    
     int j=i;
     for(;i<len;i++)
     {
@@ -59,35 +62,119 @@ void process(char inp[1000])
     end[i]='\0';
 
     double val=atof(end);
+    
+    //printf("val is== %lf \n",val);
+    
     node req=newnode(val);
+    //printf("val is== %lf \n",req->data);
 
-    node head=companies[com];
-
-    if(head==NULL)
-        head=req;
+    if(companies[com]==NULL)
+        companies[com]=req;
     else
     {
-        node curr=head;
+        node curr=companies[com];
         while(curr->next!=NULL)
         {
             curr=curr->next;
         }
         curr->next=req;
     }
+    entries[com]++;
+    //printf("val head is== %lf \n",companies[com]->data);
 }
 
 void print()
 {
-    for(int i=0;i<maxcom;i++)
+    for(int i=0;i<=maxcom;i++)
     {
         node k=companies[i];
-        printf("%d ",i);
+        printf("%d ",i+1);
         while(k!=NULL)
         {
             printf("%lf ",k->data);
+            k=k->next;
         }
         printf("\n");
     }
+}
+
+node merge(node a, node b)
+{
+    node head=NULL, tail=NULL;
+    
+    while(a!=NULL)
+    {
+        double v;
+        if(b!=NULL)
+        {
+            if(b->data<a->data)
+            {
+                v=b->data;
+                b=b->next;
+            }
+            else
+            {
+                v=a->data;
+                a=a->next;
+            }
+        }
+        else
+        {
+            v= a->data;
+            a=a->next;
+        }
+        
+        if(head==NULL)
+        {
+            head=tail=newnode(v);
+        }
+        else
+        {
+            tail->next=newnode(v);
+            tail=tail->next;
+        }
+    }
+    
+    while(b!=NULL)
+    {
+        tail->next=newnode(b->data);
+        tail=tail->next;
+        b=b->next;
+    }
+    
+    return head;
+}
+
+node mergeSort(node head, int n)
+{
+    if(n>1)
+    {
+        int half=n/2;
+        node a=head;
+        node b=a;
+        
+        //printf("a is valued at %lf --",b->data);
+        
+        int i=1;
+        //we want the node at position half+1(not index, position)
+        while(i<=half)
+        {
+            //printf("b is valued at %ld",b->data);
+            b=b->next;
+            i++;
+        }
+        //printf("b is valued at %lf\n",b->data);
+        a=mergeSort(a, half);
+        b=mergeSort(b, n-half);
+        
+        return merge(a,b);
+    }
+}
+
+void sort()
+{
+    for(int i=0;i<=maxcom;i++)
+       companies[i]=mergeSort(companies[i], entries[i]);
 }
 
 int main()
@@ -106,7 +193,7 @@ int main()
             inp[i]='\0';
             i=0;
             process(inp);
-            printf("%s \n",inp);
+            //printf("%s \n",inp);
             strcpy(inp,"");
         }
         chr=getchar();
@@ -115,8 +202,11 @@ int main()
     inp[i]='\0';
     i=0;
     process(inp);
-    printf("%s \n",inp);
+    //printf("%s \n",inp);
     strcpy(inp,"");
+    
+    sort();
+    
     print();
 
     return 0;
