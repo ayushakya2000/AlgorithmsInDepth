@@ -89,10 +89,14 @@ void print()
     {
         node k=companies[i];
         printf("%d ",i+1);
-        while(k!=NULL)
+        
+        int b=1;
+        
+        while(k!=NULL&&b<=entries[i])
         {
             printf("%lf ",k->data);
             k=k->next;
+            b++;
         }
         printf("\n");
     }
