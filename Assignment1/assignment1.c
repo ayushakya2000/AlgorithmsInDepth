@@ -1,18 +1,20 @@
 #include <stdio.h>
-
+#include <string.h>
+#include <stdlib.h>
 struct Node //for linked list
 {
     double data;
     struct Node* next;
-}
-typedef struct Node* node;
+};
+typedef struct Node *node;
 
-node companies[10];
+node companies[100000];
+int maxcom=0;
 
 node newnode(double val)
 {
     node nd;
-    nd=(node)malloc(sizeof(struct node));
+    nd=(node)malloc(sizeof(struct Node));
 
     nd->data=val;
     nd->next=NULL;
@@ -30,22 +32,24 @@ void process(char inp[1000])
     for(i=0;i<len;i++)
     {
         if(inp[i]!=' ')
-            res[i]=inp[i];
+            res[i]=inp[i];//i goes upto first space
         else
             break;
     }
 
     res[i]='\0';
     com=atoi(res);
+    if(maxcom<com)
+        maxcom=com;
 
     int j=i;
     for(;i<len;i++)
     {
         if(inp[i]==' ')
-            j=i;
+            j=i;//j has last space
     }
     j++;
-    i=0;
+    i=0;//reusing i
 
     for(;j<len;j++,i++)
     {
@@ -64,7 +68,7 @@ void process(char inp[1000])
     else
     {
         node curr=head;
-        while(curr->next!=null)
+        while(curr->next!=NULL)
         {
             curr=curr->next;
         }
@@ -72,18 +76,48 @@ void process(char inp[1000])
     }
 }
 
+void print()
+{
+    for(int i=0;i<maxcom;i++)
+    {
+        node k=companies[i];
+        printf("%d ",i);
+        while(k!=NULL)
+        {
+            printf("%lf ",k->data);
+        }
+        printf("\n");
+    }
+}
+
 int main()
 {
-    char inp[1000], chr;
+    char inp[1000]="", chr;
+    int i=0;
+    
+   chr=getchar();
+   
+   while(chr!=EOF)
+   {
+       if(chr!='\n')
+        inp[i++]=chr;
+        else
+        {
+            inp[i]='\0';
+            i=0;
+            process(inp);
+            printf("%s \n",inp);
+            strcpy(inp,"");
+        }
+        chr=getchar();
+   }
 
-
-    scanf(" %[^\n]",inp);
-
-    while(inp!=EOF)
-    {
-        process(inp);
-        scanf(" %[^\n]",inp);
-    }
+    inp[i]='\0';
+    i=0;
+    process(inp);
+    printf("%s \n",inp);
+    strcpy(inp,"");
+    print();
 
     return 0;
 }
