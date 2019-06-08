@@ -89,6 +89,7 @@ void print()
     {
         node k=companies[i];
         printf("%d ",i+1);
+        
         while(k!=NULL)
         {
             printf("%lf ",k->data);
@@ -152,18 +153,20 @@ node mergeSort(node head, int n)
         int half=n/2;
         node a=head;
         node b=a;
-        
-        //printf("a is valued at %lf --",b->data);
-        
         int i=1;
-        //we want the node at position half+1(not index, position)
+        node c=a;//to store node just before b, where link between a and b is broken...
+        //we want the b node at position half+1(not index, position)
+        
         while(i<=half)
         {
-            //printf("b is valued at %ld",b->data);
+            if(i<half)
+                c=c->next;
             b=b->next;
             i++;
         }
-        //printf("b is valued at %lf\n",b->data);
+        
+        c->next=NULL;
+        
         a=mergeSort(a, half);
         b=mergeSort(b, n-half);
         
